@@ -1,7 +1,6 @@
 from functools import reduce
 
 class HTMLNode():
-    # TODO: default vals
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
         self.value = value
