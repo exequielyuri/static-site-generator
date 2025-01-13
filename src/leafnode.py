@@ -7,6 +7,8 @@ class LeafNode(HTMLNode):
     def to_html(self):
         if not hasattr(self, 'value'):
             raise ValueError('LeafNode has no value.')
+        if self.tag == None:
+            return self.value
 
-        return (self.value if self.tag==None
-                else f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>')
+        props_html = '' if self.props==None else self.props_to_html()
+        return f'<{self.tag}{props_html}>{self.value}</{self.tag}>'
