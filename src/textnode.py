@@ -35,27 +35,25 @@ class TextNode():
             else: nodes.append(TextNode(texts[idx], text_type))
         return nodes
 
+    def to_html_node(self):
+        html_node = LeafNode(None, '')
 
+        match self.text_type:
+            case TextType.NORMAL:
+                html_node = LeafNode(None, self.text)
+            case TextType.BOLD:
+                html_node = LeafNode('b', self.text)
+            case TextType.ITALIC:
+                html_node = LeafNode('i', self.text)
+            case TextType.CODE:
+                html_node = LeafNode('code', self.text)
+            case TextType.LINK:
+                props = { 'href': self.url }
+                html_node = LeafNode('a', self.text, props)
+            case TextType.IMAGE:
+                props = { 'alt': self.text, 'src': self.url }
+                html_node = LeafNode('img', None, props)
+            case _:
+                raise ValueError('Invalid text type.')
 
-def text_node_to_html_node(text_node):
-    html_node = LeafNode(None, '')
-
-    match text_node.text_type:
-        case TextType.NORMAL:
-            html_node = LeafNode(None, text_node.text)
-        case TextType.BOLD:
-            html_node = LeafNode('b', text_node.text)
-        case TextType.ITALIC:
-            html_node = LeafNode('i', text_node.text)
-        case TextType.CODE:
-            html_node = LeafNode('code', text_node.text)
-        case TextType.LINK:
-            props = { 'href': text_node.url }
-            html_node = LeafNode('a', text_node.text, props)
-        case TextType.IMAGE:
-            props = { 'alt': text_node.text, 'src': text_node.url }
-            html_node = LeafNode('img', None, props)
-        case _:
-            raise ValueError('Invalid text type.')
-
-    return html_node
+        return html_node

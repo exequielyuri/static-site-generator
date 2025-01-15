@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType, text_node_to_html_node
+from textnode import TextNode, TextType
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -71,32 +71,32 @@ class TestTextNodeSplit(unittest.TestCase):
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_normal(self):
         text_node = TextNode('normal text', TextType.NORMAL)
-        html_node = text_node_to_html_node(text_node)
+        html_node = text_node.to_html_node()
         self.assertEqual(html_node.to_html(), 'normal text')
 
     def test_bold(self):
         text_node = TextNode('bold text', TextType.BOLD)
-        html_node = text_node_to_html_node(text_node)
+        html_node = text_node.to_html_node()
         self.assertEqual(html_node.to_html(), '<b>bold text</b>')
 
     def test_italic(self):
         text_node = TextNode('italic text', TextType.ITALIC)
-        html_node = text_node_to_html_node(text_node)
+        html_node = text_node.to_html_node()
         self.assertEqual(html_node.to_html(), '<i>italic text</i>')
 
     def test_code(self):
         text_node = TextNode('code text', TextType.CODE)
-        html_node = text_node_to_html_node(text_node)
+        html_node = text_node.to_html_node()
         self.assertEqual(html_node.to_html(), '<code>code text</code>')
 
     def test_link(self):
         text_node = TextNode('link text', TextType.LINK, 'link.com')
-        html_node = text_node_to_html_node(text_node)
+        html_node = text_node.to_html_node()
         self.assertEqual(html_node.to_html(), '<a href="link.com">link text</a>')
 
     def test_image(self):
         text_node = TextNode('image text', TextType.IMAGE, './image.jpg')
-        html_node = text_node_to_html_node(text_node)
+        html_node = text_node.to_html_node()
         self.assertEqual(html_node.to_html(), '<img alt="image text" src="./image.jpg"></img>')
 
 
