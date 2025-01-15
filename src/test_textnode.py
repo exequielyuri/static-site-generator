@@ -20,6 +20,54 @@ class TestTextNode(unittest.TestCase):
         node = TextNode('Text node', TextType.NORMAL)
         self.assertEqual(repr(node), 'TextNode(Text node, normal, None)')
 
+class TestTextNodeSplit(unittest.TestCase):
+    def test_normal(self):
+        node = TextNode('text', TextType.NORMAL)
+        split_nodes = node.split('`', TextType.CODE)
+        self.assertEqual(split_nodes, [ node ])
+
+    def test_italic(self):
+        node = TextNode('text', TextType.ITALIC)
+        split_nodes = node.split('`', TextType.CODE)
+        self.assertEqual(split_nodes, [ node ])
+
+    def test_bold(self):
+        node = TextNode('text', TextType.BOLD)
+        split_nodes = node.split('`', TextType.CODE)
+        self.assertEqual(split_nodes, [ node ])
+
+    def test_code(self):
+        node = TextNode('text', TextType.CODE)
+        split_nodes = node.split('`', TextType.BOLD)
+        self.assertEqual(split_nodes, [ node ])
+
+    def test_normal_italic(self):
+        node = TextNode('a*b*', TextType.NORMAL)
+        split_nodes = node.split('*', TextType.ITALIC)
+        self.assertEqual(split_nodes, [
+            TextNode('a', TextType.NORMAL),
+            TextNode('b', TextType.ITALIC)
+        ])
+
+    def test_text_bold_text(self):
+        node = TextNode('a**b**c', TextType.NORMAL)
+        split_nodes = node.split('**', TextType.BOLD)
+        self.assertEqual(split_nodes, [
+            TextNode('a', TextType.NORMAL),
+            TextNode('b', TextType.BOLD),
+            TextNode('c', TextType.NORMAL)
+        ])
+
+    def test_code_normal_code_normal(self):
+        node = TextNode('`a`b`c`d', TextType.NORMAL)
+        split_nodes = node.split('`', TextType.CODE)
+        self.assertEqual(split_nodes, [
+            TextNode('a', TextType.CODE),
+            TextNode('b', TextType.NORMAL),
+            TextNode('c', TextType.CODE),
+            TextNode('d', TextType.NORMAL),
+        ])
+
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_normal(self):
         text_node = TextNode('normal text', TextType.NORMAL)

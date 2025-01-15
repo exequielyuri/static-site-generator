@@ -23,6 +23,20 @@ class TextNode():
     def __repr__(self):
         return f'TextNode({self.text}, {self.text_type.value}, {self.url})'
 
+    def split(self, delim, text_type):
+        if self.text_type != TextType.NORMAL:
+            return [ self ]
+
+        nodes = []
+        texts = self.text.split(delim)
+        for idx in range(0, len(texts)):
+            if texts[idx] == '': continue
+            if idx%2 == 0: nodes.append(TextNode(texts[idx], TextType.NORMAL))
+            else: nodes.append(TextNode(texts[idx], text_type))
+        return nodes
+
+
+
 def text_node_to_html_node(text_node):
     html_node = LeafNode(None, '')
 
