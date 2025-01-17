@@ -89,16 +89,69 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node.to_html_node()
         self.assertEqual(html_node.to_html(), '<code>code text</code>')
 
-    def test_link(self):
-        text_node = TextNode('link text', TextType.LINK, 'link.com')
-        html_node = text_node.to_html_node()
-        self.assertEqual(html_node.to_html(), '<a href="link.com">link text</a>')
+class TestTextNodeToImages(unittest.TestCase):
+    def test_not_normal(self):
+        node = TextNode('text', TextType.BOLD)
+        nodes = node.split_img_nodes()
+        self.assertEqual(nodes, [ node ])
 
-    def test_image(self):
-        text_node = TextNode('image text', TextType.IMAGE, './image.jpg')
-        html_node = text_node.to_html_node()
-        self.assertEqual(html_node.to_html(), '<img alt="image text" src="./image.jpg"></img>')
+    def test_one_img(self):
+        node = TextNode('![alt](link)', TextType.NORMAL)
+        nodes = node.split_img_nodes()
+        self.assertEqual(nodes, [ TextNode('alt', TextType.IMAGE, 'link') ])
 
+    def test_img_no_alt(self):
+        node = TextNode('![](link)', TextType.NORMAL)
+        nodes = node.split_img_nodes()
+        self.assertEqual(nodes, [ TextNode('', TextType.IMAGE, 'link') ])
+
+    def test_img_no_link(self):
+        node = TextNode('![alt]()', TextType.NORMAL)
+        nodes = node.split_img_nodes()
+        self.assertEqual(nodes, [ TextNode('alt', TextType.IMAGE, '') ])
+
+    def test_imgs_with_noise(self):
+        node = TextNode('a ![a1](l1) b ![a2](l2) [t1](h1)', TextType.NORMAL)
+        nodes = node.split_img_nodes()
+        self.assertEqual(nodes, [
+            TextNode('a ', TextType.NORMAL),
+            TextNode('a1', TextType.IMAGE, 'l1'),
+            TextNode(' b ', TextType.NORMAL),
+            TextNode('a2', TextType.IMAGE, 'l2'),
+            TextNode(' [t1](h1)', TextType.NORMAL),
+        ])
+
+class TestTextNodeToLinks(unittest.TestCase):
+    def test_not_normal(self):
+        node = TextNode('text', TextType.BOLD)
+        nodes = node.split_link_nodes()
+        self.assertEqual(nodes, [ node ])
+
+    def test_one_link(self):
+        node = TextNode('[text](href)', TextType.NORMAL)
+        nodes = node.split_link_nodes()
+        self.assertEqual(nodes, [ TextNode('text', TextType.LINK, 'href') ])
+
+    def test_link_no_text(self):
+        node = TextNode('[](href)', TextType.NORMAL)
+        nodes = node.split_link_nodes()
+        self.assertEqual(nodes, [ TextNode('', TextType.LINK, 'href') ])
+
+    def test_link_no_href(self):
+        node = TextNode('[text]()', TextType.NORMAL)
+        nodes = node.split_link_nodes()
+        self.assertEqual(nodes, [ TextNode('text', TextType.LINK, '') ])
+
+    def test_links_with_noise(self):
+        node = TextNode('a [t1](h1) b [t2](h2) ![a1](l1)', TextType.NORMAL)
+        nodes = node.split_link_nodes()
+        self.assertEqual(nodes, [
+            TextNode('a ', TextType.NORMAL),
+            TextNode('t1', TextType.LINK, 'h1'),
+            TextNode(' b ', TextType.NORMAL),
+            TextNode('t2', TextType.LINK, 'h2'),
+            TextNode(' ![a1](l1)', TextType.NORMAL),
+        ])
 
 if __name__ == '__main__':
     unittest.main()

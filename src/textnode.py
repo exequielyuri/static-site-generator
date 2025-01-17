@@ -1,5 +1,6 @@
 from enum import Enum
 from leafnode import LeafNode
+from md_helpers import extract_md_img, extract_md_link
 
 class TextType(Enum):
     NORMAL = 'normal'
@@ -33,6 +34,46 @@ class TextNode():
             if texts[idx] == '': continue
             if idx%2 == 0: nodes.append(TextNode(texts[idx], TextType.NORMAL))
             else: nodes.append(TextNode(texts[idx], text_type))
+        return nodes
+
+    def split_img_nodes(self):
+        if self.text_type != TextType.NORMAL:
+            return [ self ]
+
+        imgs = extract_md_img(self.text)
+        if len(imgs) == 0:
+            return [ self ]
+
+        nodes = []
+        curr_text = self.text
+        for img in imgs:
+            img_md = f'![{img[0]}]({img[1]})'
+            texts = curr_text.split(img_md, 1)
+            if texts[0] != '': nodes.append(TextNode(texts[0], TextType.NORMAL))
+            nodes.append(TextNode(img[0], TextType.IMAGE, img[1]))
+            curr_text = texts[1]
+        if curr_text != '': nodes.append(TextNode(curr_text, TextType.NORMAL))
+
+        return nodes
+
+    def split_link_nodes(self):
+        if self.text_type != TextType.NORMAL:
+            return [ self ]
+
+        links = extract_md_link(self.text)
+        if len(links) == 0:
+            return [ self ]
+
+        nodes = []
+        curr_text = self.text
+        for link in links:
+            link_md = f'[{link[0]}]({link[1]})'
+            texts = curr_text.split(link_md, 1)
+            if texts[0] != '': nodes.append(TextNode(texts[0], TextType.NORMAL))
+            nodes.append(TextNode(link[0], TextType.LINK, link[1]))
+            curr_text = texts[1]
+        if curr_text != '': nodes.append(TextNode(curr_text, TextType.NORMAL))
+
         return nodes
 
     def to_html_node(self):
