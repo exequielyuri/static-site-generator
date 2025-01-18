@@ -52,3 +52,6 @@ class TestExtractMDLink(unittest.TestCase):
         text = 'noise [alt](link) noise [al]t2](link2) [alt3](l(ink3)'
         res = [ ('alt', 'link') ]
         self.assertEqual(extract_md_link(text), res)
+
+if __name__ == '__main__':
+    unittest.main()
