@@ -1,6 +1,7 @@
 from enum import Enum
 from leafnode import LeafNode
 from md_helpers import extract_md_img, extract_md_link
+from functools import reduce
 
 class TextType(Enum):
     NORMAL = 'normal'
@@ -98,3 +99,12 @@ class TextNode():
                 raise ValueError('Invalid text type.')
 
         return html_node
+
+def md_to_text_nodes(md):
+    nodes = [ TextNode(md, TextType.NORMAL) ]
+    nodes = reduce(lambda acc, curr: acc + curr.split('**', TextType.BOLD), nodes, [])
+    nodes = reduce(lambda acc, curr: acc + curr.split('*', TextType.ITALIC), nodes, [])
+    nodes = reduce(lambda acc, curr: acc + curr.split('`', TextType.CODE), nodes, [])
+    nodes = reduce(lambda acc, curr: acc + curr.split_img_nodes(), nodes, [])
+    nodes = reduce(lambda acc, curr: acc + curr.split_link_nodes(), nodes, [])
+    return nodes

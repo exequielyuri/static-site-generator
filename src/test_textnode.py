@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType
+from textnode import *
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -151,6 +151,69 @@ class TestTextNodeToLinks(unittest.TestCase):
             TextNode(' b ', TextType.NORMAL),
             TextNode('t2', TextType.LINK, 'h2'),
             TextNode(' ![a1](l1)', TextType.NORMAL),
+        ])
+
+class TestMDToTextNodes(unittest.TestCase):
+    def test_normal(self):
+        md = 'just text'
+        nodes = md_to_text_nodes(md)
+        self.assertEqual(nodes, [ TextNode('just text', TextType.NORMAL) ])
+
+    def test_bold(self):
+        md = 'a **bold** a'
+        nodes = md_to_text_nodes(md)
+        self.assertEqual(nodes, [
+            TextNode('a ', TextType.NORMAL),
+            TextNode('bold', TextType.BOLD),
+            TextNode(' a', TextType.NORMAL)
+        ])
+
+    def test_italic(self):
+        md = 'a *italic* a'
+        nodes = md_to_text_nodes(md)
+        self.assertEqual(nodes, [
+            TextNode('a ', TextType.NORMAL),
+            TextNode('italic', TextType.ITALIC),
+            TextNode(' a', TextType.NORMAL)
+        ])
+
+    def test_code(self):
+        md = 'a `code` a'
+        nodes = md_to_text_nodes(md)
+        self.assertEqual(nodes, [
+            TextNode('a ', TextType.NORMAL),
+            TextNode('code', TextType.CODE),
+            TextNode(' a', TextType.NORMAL)
+        ])
+
+    def test_img(self):
+        md = 'a ![alt](link) a'
+        nodes = md_to_text_nodes(md)
+        self.assertEqual(nodes, [
+            TextNode('a ', TextType.NORMAL),
+            TextNode('alt', TextType.IMAGE, 'link'),
+            TextNode(' a', TextType.NORMAL)
+        ])
+
+    def test_link(self):
+        md = 'a [text](href) a'
+        nodes = md_to_text_nodes(md)
+        self.assertEqual(nodes, [
+            TextNode('a ', TextType.NORMAL),
+            TextNode('text', TextType.LINK, 'href'),
+            TextNode(' a', TextType.NORMAL)
+        ])
+
+    def test_all(self):
+        md = 'a**b**`c`*i*![alt](link)[text](href)'
+        nodes = md_to_text_nodes(md)
+        self.assertEqual(nodes, [
+            TextNode('a', TextType.NORMAL),
+            TextNode('b', TextType.BOLD),
+            TextNode('c', TextType.CODE),
+            TextNode('i', TextType.ITALIC),
+            TextNode('alt', TextType.IMAGE, 'link'),
+            TextNode('text', TextType.LINK, 'href'),
         ])
 
 if __name__ == '__main__':
