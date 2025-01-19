@@ -53,5 +53,38 @@ class TestExtractMDLink(unittest.TestCase):
         res = [ ('alt', 'link') ]
         self.assertEqual(extract_md_link(text), res)
 
+class TestMDToBlocks(unittest.TestCase):
+    def test_empty(self):
+        md = ''
+        blocks = extract_md_blocks(md)
+        self.assertEqual(blocks, [ ])
+
+    def test_one_block(self):
+        md = 'a'
+        blocks = extract_md_blocks(md)
+        self.assertEqual(blocks, [ md ])
+
+    def test_two_blocks(self):
+        md = 'a \n\n b \n\n'
+        blocks = extract_md_blocks(md)
+        self.assertEqual(blocks, [ 'a', 'b' ])
+
+    def test_md(self):
+        md = """
+        # heading
+
+        ```
+        code block
+        ```
+
+        > quote
+        """
+        blocks = extract_md_blocks(md)
+        self.assertEqual(blocks, [
+            '# heading',
+            '```\n        code block\n        ```',
+            '> quote'
+        ])
+
 if __name__ == '__main__':
     unittest.main()
