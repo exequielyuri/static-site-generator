@@ -35,7 +35,7 @@ def md_to_html_node(md):
 
     blocks = extract_md_blocks(md)
     html_nodes = list(map(block_to_html_node, blocks))
-    return ParentNode('html', html_nodes)
+    return ParentNode('div', html_nodes)
 
 def block_to_html_node(block):
     match md_block_type(block):
