@@ -157,3 +157,27 @@ class TestMDToHTMLNode(unittest.TestCase):
                                 ])
                         ])
         self.assertEqual(html_node, expected_node)
+
+class TestExtractTitle(unittest.TestCase):
+    def test_empty(self):
+        with self.assertRaises(ValueError):
+            extract_title('')
+
+    def test_no_h1(self):
+        with self.assertRaises(ValueError):
+            extract_title('## text')
+
+    def test_only_h1(self):
+        md = '# text'
+        title = extract_title(md)
+        self.assertEqual(title, 'text')
+
+    def test_with_h2(self):
+        md = '# t1\n\n## t2'
+        title = extract_title(md)
+        self.assertEqual(title, 't1')
+
+    def test_with_h2_inverted(self):
+        md = '## t1\n\n# t2'
+        title = extract_title(md)
+        self.assertEqual(title, 't2')

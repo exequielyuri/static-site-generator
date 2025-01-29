@@ -88,3 +88,21 @@ def children_nodes(block):
     text_nodes = md_to_text_nodes(block)
     children = list(map(lambda tn: tn.to_html_node(), text_nodes))
     return children
+
+def extract_title(md):
+    blocks = extract_md_blocks(md)
+
+    title = None
+    for block in blocks:
+        if md_block_type(block) != BlockType.HEADING:
+            continue
+        heading_node = block_to_heading(block)
+        if heading_node.tag == 'h1':
+            title = block
+            break
+
+    if title == None:
+        raise ValueError('Markdown does not contain H1.')
+    else:
+        match = re.match(r'#\s*(.*)', title)
+        return match and match.group(1)
