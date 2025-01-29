@@ -103,6 +103,10 @@ def extract_title(md):
 
     if title == None:
         raise ValueError('Markdown does not contain H1.')
-    else:
-        match = re.match(r'#\s*(.*)', title)
-        return match and match.group(1)
+
+    match = re.match(r'#\s*(.*)', title)
+
+    if match == None:
+        raise ValueError('Markdown does not contain H1.')
+
+    return match.group(1)
