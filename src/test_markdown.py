@@ -130,10 +130,6 @@ class TestMDToHTMLNode(unittest.TestCase):
                         ])
         self.assertEqual(html_node, expected_node)
 
-    # TODO:
-    # Block is getting interpreted as u_list when seeing asterisks.
-    # Also, what if we have italics?
-    # Also, why does code block have an extra space (\n) on top?
     def test_italic(self):
         md = '*text*'
         html_node = md_to_html_node(md)
