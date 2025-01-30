@@ -22,7 +22,7 @@ def md_block_type(block):
         block_type = BlockType.CODE
     elif block.startswith('>'):
         block_type = BlockType.QUOTE
-    elif all(line.startswith(('-', '*')) for line in md_lines):
+    elif all(line.startswith(('- ', '* ')) for line in md_lines):
         block_type = BlockType.U_LIST
     elif all(re.match(r'^\d+\.', line) for line in md_lines):
         block_type = BlockType.O_LIST
@@ -44,7 +44,7 @@ def block_to_html_node(block):
         case BlockType.HEADING:
             return block_to_heading(block)
         case BlockType.CODE:
-            block = re.sub(r'```', '', block)
+            block = block.replace('```', '').strip()
             return ParentNode('pre', [ ParentNode('code', children_nodes(block)) ])
         case BlockType.QUOTE:
             block = re.sub(r'>\s*', '', block)

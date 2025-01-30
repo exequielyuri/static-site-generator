@@ -105,7 +105,7 @@ class TestMDToHTMLNode(unittest.TestCase):
         self.assertEqual(html_node, expected_node)
 
     def test_u_list(self):
-        md = '-a \n *b \n -c'
+        md = '- a \n * b \n - c'
         html_node = md_to_html_node(md)
         expected_node = ParentNode('div', [
                             ParentNode('ul',
@@ -128,6 +128,22 @@ class TestMDToHTMLNode(unittest.TestCase):
                                     ParentNode('li', [ LeafNode(None, 'c') ])
                                 ])
                         ])
+        self.assertEqual(html_node, expected_node)
+
+    # TODO:
+    # Block is getting interpreted as u_list when seeing asterisks.
+    # Also, what if we have italics?
+    # Also, why does code block have an extra space (\n) on top?
+    def test_italic(self):
+        md = '*text*'
+        html_node = md_to_html_node(md)
+        expected_node = ParentNode('div', [ ParentNode('p', [ LeafNode('i', 'text') ]) ])
+        self.assertEqual(html_node, expected_node)
+
+    def test_bold(self):
+        md = '**text**'
+        html_node = md_to_html_node(md)
+        expected_node = ParentNode('div', [ ParentNode('p', [ LeafNode('b', 'text') ]) ])
         self.assertEqual(html_node, expected_node)
 
 class TestExtractTitle(unittest.TestCase):
